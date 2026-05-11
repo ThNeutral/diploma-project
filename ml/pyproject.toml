@@ -1,0 +1,40 @@
+[project]
+name = "diploma"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "datasets>=4.8.4",
+    "huggingface-hub>=1.10.2",
+    "matplotlib>=3.10.9",
+    "onnx>=1.21.0",
+    "onnxscript>=0.7.0",
+    "scikit-learn>=1.8.0",
+    "torch>=2.11.0",
+    "torchvision>=0.26.0",
+    "tqdm>=4.67.3",
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+torchvision = { index = "pytorch-cu128" }
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.408",
+]
+
+[tool.pyright]
+typeCheckingMode = "standard"
+include = ["src"]
+exclude = [".venv", "**/node_modules", "**/__pycache__", "**/.*"]
+venvPath = "."
+venv = ".venv"
+reportMissingImports = true
+reportMissingTypeStubs = false

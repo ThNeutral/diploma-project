@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Asp.Versioning.Mvc" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PlantDiseaseRecognition.WebApi.Engine.Rust\PlantDiseaseRecognition.WebApi.Engine.Rust.csproj" />
+    <ProjectReference Include="..\PlantDiseaseRecognition.WebApi.Engine.Contracts\PlantDiseaseRecognition.WebApi.Engine.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

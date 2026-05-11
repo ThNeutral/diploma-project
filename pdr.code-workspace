@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "webapi",
+			"name": "WebAPI"
+		},
+		{
+			"path": "engine",
+			"name": "Engine"
+		},
+		{
+			"path": "ml",
+			"name": "Machine Learning"
+		},
+		{
+			"path": "models",
+			"name": "Models"
+		}
+	]
+}
