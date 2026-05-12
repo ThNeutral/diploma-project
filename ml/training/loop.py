@@ -9,10 +9,11 @@ from torch import optim
 from torch import nn
 
 from .model import get_eval_transform, build_model, ModelName, get_model_input_size_1d, get_model_input_size_4d
-from datasets import get_datasets_from_subfolders, get_dataset_from_folder
+from datasets.data import get_datasets_from_subfolders, get_dataset_from_folder
 
 from .train_step import train_step
 from .test_step import test_step
+from .val_step import val_step
 
 def train_model(
 		*,
@@ -49,6 +50,8 @@ def train_model(
 	)
 	class_to_idx = train_dataset.class_to_idx
 	classes = train_dataset.classes
+	logging.debug("Classes: ")
+	logging.debug(classes)
 
 	validation_dataset = get_dataset_from_folder(
 		source=val_data_dir,
@@ -58,10 +61,21 @@ def train_model(
 	train_dataloader = DataLoader(
 		dataset=train_dataset,
 		batch_size=batch_size,
+		shuffle=True,
+		num_workers=4
 	)
 	test_dataloader = DataLoader(
 		dataset=test_dataset,
 		batch_size=batch_size,
+		shuffle=False, 
+		num_workers=4
+	)
+
+	validation_dataloader = DataLoader(
+		dataset=validation_dataset,
+		batch_size=batch_size,
+		shuffle=True,
+		num_workers=4
 	)
 
 	num_of_classes = len(class_to_idx)
@@ -72,15 +86,20 @@ def train_model(
 		device=device
 	)
 	
-	X, y = next(iter(train_dataset))
+	X, y = next(iter(train_dataloader))
 	logging.debug("Dataset size")
 	logging.debug("\tX: %s", X.shape)
-	logging.debug("\ty: %s", y)
+	logging.debug("\ty: %s", y.shape)
 
 	model.train()
-	y_pred = model(X.to(device).unsqueeze(0))
+	y_pred = model(X.to(device))
 	logging.debug("Model output size")
 	logging.debug("\t%s", y_pred.shape)
+	
+	X, y = next(iter(validation_dataloader))
+	logging.debug("Validation size")
+	logging.debug("\tX: %s", X.shape)
+	logging.debug("\ty: %s", y.shape)
 
 	optimizer = optim.SGD(
 		params=model.classifier.parameters()
@@ -89,22 +108,31 @@ def train_model(
 	loss_fn = nn.CrossEntropyLoss()
 
 	for epoch in range(epochs):
-		train_result = train_step(
-			model=model,
-			dataloader=train_dataloader,
-			optimizer=optimizer,
-			loss_fn=loss_fn,
-			device=device
-		)
-		print(f"Epoch: {epoch}. Train. Loss {train_result.avg_loss}")
+		# train_result = train_step(
+		# 	model=model,
+		# 	dataloader=train_dataloader,
+		# 	optimizer=optimizer,
+		# 	loss_fn=loss_fn,
+		# 	device=device
+		# )
+		# print(f"Epoch: {epoch}. Train. Loss {train_result.avg_loss}")
 
-		test_result = test_step(
+		# test_result = test_step(
+		# 	model=model,
+		# 	dataloader=test_dataloader,
+		# 	loss_fn=loss_fn,
+		# 	device=device
+		# )
+		# print(f"Epoch: {epoch}. Test. Loss {test_result.avg_loss}")
+
+		val_result = val_step(
 			model=model,
-			dataloader=train_dataloader,
+			dataloader=validation_dataloader,
 			loss_fn=loss_fn,
 			device=device
 		)
-		print(f"Epoch: {epoch}. Test. Loss {test_result.avg_loss}")
+		print(f"Epoch: {epoch}. Test. Loss {val_result.avg_loss}")
+
 
 	input_size = get_model_input_size_4d(base_model_name)
 	dummy_input = torch.randn(input_size).to(device)

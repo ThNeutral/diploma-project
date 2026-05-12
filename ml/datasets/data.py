@@ -17,7 +17,6 @@ def get_datasets_from_subfolders(
 
 	assert train_transform
 	assert test_transform
-	
 
 	train_dataset = get_dataset_from_folder(
 		source=train_dir,

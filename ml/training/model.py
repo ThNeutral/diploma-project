@@ -7,18 +7,18 @@ from dto.training import ModelName
 
 model_packages = {
 	ModelName.EfficientNetV2_S: (
-		torchvision.models.EfficientNet_V2_S_Weights,
+		torchvision.models.EfficientNet_V2_S_Weights.DEFAULT,
 		torchvision.models.efficientnet_v2_s,
 	),
 	ModelName.EfficientNetV2_M: (
-		torchvision.models.EfficientNet_V2_M_Weights,
+		torchvision.models.EfficientNet_V2_M_Weights.DEFAULT,
 		torchvision.models.efficientnet_v2_m,
 	)
 }
 
 def get_eval_transform(model_name: ModelName):
 	weigths, _ = get_model_package(model_name)
-	return weigths.transforms
+	return weigths.transforms()
 
 def get_model_input_size_1d(model_name: ModelName):
 	weights, _ = get_model_package(model_name)
