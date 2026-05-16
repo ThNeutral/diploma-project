@@ -7,7 +7,7 @@ from tqdm.auto import tqdm
 
 from dto.training import StepResult 
 
-from datasets.mapper import map_plant_village_to_plant_doc
+from datasets.mapper import map_plant_doc_to_plant_village
 
 def val_step(
 	*,
@@ -22,8 +22,9 @@ def val_step(
 		X_val = X_val.to(device)
 		y_val = y_val.to(device)
 
+		y_val = map_plant_doc_to_plant_village(y_val, device=device)
+		
 		y_pred = model(X_val)
-		X_val = map_plant_village_to_plant_doc(y_val)
 
 		loss = loss_fn(y_pred, y_val)
 
