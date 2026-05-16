@@ -20,7 +20,7 @@ def test_step(
 		X_test = X_test.to(device)
 		y_test = y_test.to(device)
 		
-		y_pred = model(y_test)
+		y_pred = model(X_test)
 
 		loss = loss_fn(y_pred, y_test)
 
