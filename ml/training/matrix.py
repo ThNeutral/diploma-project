@@ -3,9 +3,12 @@ import torch
 from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder
 from torchvision import transforms
+from torch.utils.tensorboard import SummaryWriter
 
 from .loop import train_model_
 from .save_model import save_model
+
+from tracking import ExperimentTracker
 
 from .model import get_model_input_size_1d, get_model_input_size_4d, build_model, get_eval_transform
 from datasets.data import get_dataset_from_folder
@@ -59,6 +62,13 @@ def _train_from_config(
 	num_workers: int,
 	unfrozen_blocks: int
 ):
+	output_dir = output_dir / output_model_name
+	output_dir.mkdir(parents=True, exist_ok=True)
+	
+	tracker = ExperimentTracker(
+		log_dir=output_dir / "logs"
+	) 
+
 	input_size = get_model_input_size_1d(base_model_name)
 	
 	eval_transform = get_eval_transform(base_model_name)
@@ -95,16 +105,14 @@ def _train_from_config(
 		model=model,
 		dataloaders=dataloaders,
 		epochs=epochs,
-		device=device
+		device=device,
+		tracker=tracker
 	)	
 
 	metadata = ModelMetadata(
 		input_size=get_model_input_size_4d(base_model_name),
 		classes=classes
 	)
-
-	output_dir = output_dir / output_model_name
-	output_dir.mkdir(parents=True, exist_ok=True)
 
 	save_model(
 		model=model,
@@ -113,6 +121,8 @@ def _train_from_config(
 		model_name=output_model_name,
 		device=device
 	)
+
+	tracker.close()
 
 
 def _build_train_transform(input_size: int, should_augment: bool):

@@ -2,6 +2,7 @@ import torch
 from torch import nn
 from torch.utils import data
 from torch import optim
+from torch.utils.tensorboard import SummaryWriter
 
 from tqdm.auto import tqdm
 

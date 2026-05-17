@@ -4,6 +4,8 @@ from utils import logging
 from torch import optim
 from torch import nn
 
+from tracking import ExperimentTracker
+
 from dto.training import StepName
 
 from .train_step import train_step
@@ -12,6 +14,7 @@ from .val_step import val_step
 
 def train_model_(
 		*,
+		tracker: ExperimentTracker,
 		model: nn.Module,
 		dataloaders: dict[StepName, DataLoader],
 		epochs: int,
@@ -31,7 +34,7 @@ def train_model_(
 			loss_fn=loss_fn,
 			device=device
 		)
-		print(f"Epoch: {epoch}. Train. Loss {train_result.avg_loss}")
+		print(f"{StepName.Train}. Epoch: {epoch}. Loss {train_result.avg_loss}")
 
 		test_result = test_step(
 			model=model,
@@ -39,7 +42,7 @@ def train_model_(
 			loss_fn=loss_fn,
 			device=device
 		)
-		print(f"Epoch: {epoch}. Test. Loss {test_result.avg_loss}")
+		print(f"{StepName.Test}. Epoch: {epoch}. Loss {test_result.avg_loss}")
 
 		val_result = val_step(
 			model=model,
@@ -47,5 +50,13 @@ def train_model_(
 			loss_fn=loss_fn,
 			device=device
 		)
-		print(f"Epoch: {epoch}. Test. Loss {val_result.avg_loss}")
+		print(f"{StepName.Validation}. Epoch: {epoch}. Loss {val_result.avg_loss}")
+
+		tracker.track_step({
+			StepName.Train: train_result,
+			StepName.Test: test_result,
+			StepName.Validation: val_result
+		}, epoch)
+
+	tracker.flush()
 	
