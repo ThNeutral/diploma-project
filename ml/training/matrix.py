@@ -25,6 +25,12 @@ SHOULD_AUGMENT = [
 	True
 ]
 
+UNFROZEN_BLOCKS = [
+	0,
+	1,
+	3
+]
+
 def train_variations(
 	data_dir: Path,
 	val_data_dir: Path,
@@ -42,20 +48,23 @@ def train_variations(
 	device = torch.accelerator.current_accelerator() if torch.accelerator.is_available() else 'cpu'
 	for model in MODELS:
 		for should_augment in SHOULD_AUGMENT:
-			_train_from_config(
-				output_model_name=f"{model}_{should_augment}",
-				base_model_name=model,
-				should_augment=should_augment,
-				device=device,
-				sources=sources,
-				epochs=epochs,
-				batch_size=batch_size,
-				output_dir=output_dir,
-				num_workers=num_workers
-			)	
-
+			for unfrozen_blocks in UNFROZEN_BLOCKS: 
+				_train_from_config(
+					output_model_name=f"{model}_{should_augment}",
+					base_model_name=model,
+					should_augment=should_augment,
+					device=device,
+					sources=sources,
+					epochs=epochs,
+					batch_size=batch_size,
+					output_dir=output_dir,
+					num_workers=num_workers,
+					unfrozen_blocks=unfrozen_blocks
+				)	
+		
 			break
-	pass
+
+		break
 
 def _train_from_config(
 	*,
@@ -67,7 +76,8 @@ def _train_from_config(
 	output_dir: Path,
 	epochs: int,
 	batch_size: int,
-	num_workers: int
+	num_workers: int,
+	unfrozen_blocks: int
 ):
 	input_size = get_model_input_size_1d(base_model_name)
 	
@@ -97,7 +107,8 @@ def _train_from_config(
 	model = build_model(
 		num_of_classes=num_of_classes, 
 		model_name=base_model_name, 
-		device=device
+		device=device,
+		unfrozen_blocks=3
 	)
 
 	train_model_(

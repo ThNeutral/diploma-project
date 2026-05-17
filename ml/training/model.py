@@ -2,6 +2,7 @@ import torch
 import logging
 from torch import nn
 import torchvision
+import torchsummary
 
 from dto.training import ModelName
 
@@ -35,21 +36,28 @@ def build_model(
 	*,
 	num_of_classes: int,
 	model_name: ModelName,
-	device: torch.device
+	device: torch.device,
+	unfrozen_blocks: int
 ):
 	model_package = model_packages.get(model_name)
 	assert model_package
 
 	weights, model_factory = model_package
-	model = model_factory(weights=weights.DEFAULT).to(device)
+	model: torchvision.models.EfficientNet = model_factory(weights=weights.DEFAULT).to(device)
 
 	for param in model.parameters():
 		param.requires_grad = False
+
+	for param in model.features[-unfrozen_blocks].parameters():
+		param.requires_grad = True
 
 	model.classifier = nn.Sequential(
 		nn.Dropout(0.2),
 		nn.Linear(1280, num_of_classes)
 	).to(device)
+
+	input_size = get_model_input_size_1d(model_name)
+	torchsummary.summary(model, (3, input_size, input_size))
 
 	return model
 
