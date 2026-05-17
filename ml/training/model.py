@@ -22,6 +22,7 @@ def get_eval_transform(model_name: ModelName):
 	return weigths.transforms()
 
 def get_model_input_size_1d(model_name: ModelName):
+	print(model_name)
 	weights, _ = get_model_package(model_name)
 	
 	return weights.DEFAULT.transforms().crop_size[0]

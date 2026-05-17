@@ -15,56 +15,36 @@ from utils.types import Transform
 
 from dto.training import ModelName
 
-MODELS = [
-	ModelName.EfficientNetV2_S,
-	ModelName.EfficientNetV2_M
-]
+from config import JSONConfig
 
-SHOULD_AUGMENT = [
-	False,
-	True
-]
-
-UNFROZEN_BLOCKS = [
-	0,
-	1,
-	3
-]
-
-def train_variations(
-	data_dir: Path,
-	val_data_dir: Path,
-	output_dir: Path,
-	epochs: int,
-	batch_size: int,
-	num_workers: int
+def train_variations_from_config(
+	config: JSONConfig
 ):
 	sources = {
-		StepName.Train: data_dir / "train",
-		StepName.Test: data_dir / "test",
-		StepName.Validation: val_data_dir
+		StepName.Train: config.train_data_dir,
+		StepName.Test: config.test_data_dir,
+		StepName.Validation: config.val_data_dir
 	}
 
-	device = torch.accelerator.current_accelerator() if torch.accelerator.is_available() else 'cpu'
-	for model in MODELS:
-		for should_augment in SHOULD_AUGMENT:
-			for unfrozen_blocks in UNFROZEN_BLOCKS: 
-				_train_from_config(
-					output_model_name=f"{model}_{should_augment}",
-					base_model_name=model,
-					should_augment=should_augment,
-					device=device,
-					sources=sources,
-					epochs=epochs,
-					batch_size=batch_size,
-					output_dir=output_dir,
-					num_workers=num_workers,
-					unfrozen_blocks=unfrozen_blocks
-				)	
-		
-			break
+	device = config.device
+	if not device:
+		device = torch.accelerator.current_accelerator() if torch.accelerator.is_available() else 'cpu'
 
-		break
+	run_settings = config.run_settings
+
+	for run_config in config.to_product():
+		_train_from_config(
+			output_model_name=run_config.get_run_name(),
+			base_model_name=run_config.model_name,
+			should_augment=run_config.should_augment,
+			device=device,
+			sources=sources,
+			epochs=run_settings.epochs,
+			batch_size=run_settings.batch_size,
+			output_dir=config.output_dir,
+			num_workers=run_settings.num_workers,
+			unfrozen_blocks=run_config.unfrozen_blocks
+		)	
 
 def _train_from_config(
 	*,
@@ -108,7 +88,7 @@ def _train_from_config(
 		num_of_classes=num_of_classes, 
 		model_name=base_model_name, 
 		device=device,
-		unfrozen_blocks=3
+		unfrozen_blocks=unfrozen_blocks
 	)
 
 	train_model_(

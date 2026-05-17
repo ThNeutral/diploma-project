@@ -1,31 +1,21 @@
 import argparse
-import pathlib
-import datetime
+from pathlib import Path
 
-from training.matrix import train_variations
-from dto.training import ModelName
+from training.matrix import train_variations_from_config
+
+from config import load_config_from_json_file
 
 def main():
     parser = argparse.ArgumentParser(description="Train model")
-    parser.add_argument("--out_dir", default="./models", help="Dir to save models into")
-    parser.add_argument("--data_dir", default="./data/PlantVillage", help="Directory to load data from")
-    parser.add_argument("--val_data_dir", default="./data/PlantDoc", help="Directory to load validation data from")
+    parser.add_argument("--config_file", default="./config.json", help="Config file location")
     args = parser.parse_args()
 
-    time_format = "%Y-%m-%dT%H-%M-%S"
-    now = datetime.datetime.now() 
+    config_file = Path(args.config_file) 
 
-    out_dir = pathlib.Path(args.out_dir)
-    out_dir = out_dir / f"{now.strftime(time_format)}"
-    out_dir.parent.mkdir(parents=True, exist_ok=True)
+    config = load_config_from_json_file(config_file)
 
-    data_dir = pathlib.Path(args.data_dir)
-    val_data_dir = pathlib.Path(args.val_data_dir)
-
-    train_variations(
-        output_dir=out_dir,
-        data_dir=data_dir,
-        val_data_dir=val_data_dir,
+    train_variations_from_config(
+        config=config,
     )
 
 
