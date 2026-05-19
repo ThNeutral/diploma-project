@@ -24,7 +24,7 @@ def test_step(
 
 		loss = loss_fn(y_pred, y_test)
 
-		total_loss = loss.item() * len(X_test)
+		total_loss = loss.to("cpu").item() * len(X_test)
 
 	avg_loss = total_loss / len(dataloader.dataset)
 

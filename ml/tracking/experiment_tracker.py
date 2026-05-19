@@ -22,7 +22,7 @@ class ExperimentTracker:
 		global_step: int
 	):
 		loss_dict = {name: result.avg_loss for name, result in step_result_dict.items()}
-		self._inner.add_scalar(
+		self._inner.add_scalars(
 			main_tag = "Loss",
 			tag_scalar_dict = loss_dict,
 			global_step=global_step

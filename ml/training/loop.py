@@ -27,6 +27,9 @@ def train_model_(
 	loss_fn = nn.CrossEntropyLoss()
 
 	for epoch in range(epochs):
+		logging.info(f"Epoch: {epoch}")
+		
+		logging.info(f"{StepName.Train}")
 		train_result = train_step(
 			model=model,
 			dataloader=dataloaders[StepName.Train],
@@ -34,23 +37,25 @@ def train_model_(
 			loss_fn=loss_fn,
 			device=device
 		)
-		print(f"{StepName.Train}. Epoch: {epoch}. Loss {train_result.avg_loss}")
+		logging.info(f"Loss {train_result.avg_loss}")
 
+		logging.info(f"{StepName.Test}")
 		test_result = test_step(
 			model=model,
 			dataloader=dataloaders[StepName.Test],
 			loss_fn=loss_fn,
 			device=device
 		)
-		print(f"{StepName.Test}. Epoch: {epoch}. Loss {test_result.avg_loss}")
+		logging.info(f"Loss {test_result.avg_loss}")
 
+		logging.info(f"{StepName.Validation}")
 		val_result = val_step(
 			model=model,
 			dataloader=dataloaders[StepName.Validation],
 			loss_fn=loss_fn,
 			device=device
 		)
-		print(f"{StepName.Validation}. Epoch: {epoch}. Loss {val_result.avg_loss}")
+		logging.info(f"Loss {val_result.avg_loss}")
 
 		tracker.track_step({
 			StepName.Train: train_result,

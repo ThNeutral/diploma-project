@@ -28,7 +28,7 @@ def val_step(
 
 		loss = loss_fn(y_pred, y_val)
 
-		total_loss = loss.item() * len(X_val)
+		total_loss = loss.to("cpu").item() * len(X_val)
 
 	avg_loss = total_loss / len(dataloader)
 

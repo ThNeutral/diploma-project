@@ -33,7 +33,7 @@ def train_step(
 
 		optimizer.step()
 
-		total_loss = loss.item() * len(X_train)
+		total_loss = loss.to("cpu").item() * len(X_train)
 
 	avg_loss = total_loss / len(dataloader.dataset)
 

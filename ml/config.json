@@ -15,8 +15,8 @@
 		]
 	},
 	"run_settings": {
-		"epochs": 10,
-		"batch_size": 16,
+		"epochs": 1,
+		"batch_size": 8,
 		"num_workers": 4
 	},
 	"train_data_dir": "./data/PlantVillage/train",
