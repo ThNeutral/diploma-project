@@ -9,12 +9,17 @@
 			"name": "Engine"
 		},
 		{
-			"path": "ml",
+			"path": "models",
 			"name": "Machine Learning"
 		},
 		{
-			"path": "models",
-			"name": "Models"
-		}
+			"path": "document",
+			"name": "Documents"
+		},
+		// Open this separately, since Pylance is weird about .code-workspace project
+		// {
+		// 	"path": "ml",
+		// 	"name": "Machine Learning"
+		// }
 	]
 }

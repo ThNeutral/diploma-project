@@ -4,6 +4,7 @@ from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder
 from torchvision import transforms
 from torch.utils.tensorboard import SummaryWriter
+from torchmetrics import ConfusionMatrix
 
 from .loop import train_model_
 from .save_model import save_model
@@ -88,6 +89,11 @@ def _train_from_config(
 	classes = datasources[StepName.Train].classes
 	num_of_classes = len(classes)
 
+	cm_fn = ConfusionMatrix(
+		task="multiclass",
+		num_classes=num_of_classes
+	).to(device)
+
 	dataloaders = _get_dataloaders(
 		datasources=datasources,
 		batch_size=batch_size,
@@ -103,6 +109,7 @@ def _train_from_config(
 
 	train_model_(
 		model=model,
+		cm_fn=cm_fn,
 		dataloaders=dataloaders,
 		epochs=epochs,
 		device=device,

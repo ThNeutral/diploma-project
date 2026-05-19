@@ -1,4 +1,5 @@
 import torch
+from torchmetrics import Metric
 from torch.utils.data import DataLoader
 from utils import logging
 from torch import optim
@@ -8,13 +9,12 @@ from tracking import ExperimentTracker
 
 from dto.training import StepName
 
-from .train_step import train_step
-from .test_step import test_step
-from .val_step import val_step
+from .step import step
 
 def train_model_(
 		*,
 		tracker: ExperimentTracker,
+		cm_fn: Metric,
 		model: nn.Module,
 		dataloaders: dict[StepName, DataLoader],
 		epochs: int,
@@ -30,34 +30,37 @@ def train_model_(
 		logging.info(f"Epoch: {epoch}")
 		
 		logging.info(f"{StepName.Train}")
-		train_result = train_step(
+		train_result = step(
 			model=model,
+			cm_fn=cm_fn,
 			dataloader=dataloaders[StepName.Train],
 			optimizer=optimizer,
 			loss_fn=loss_fn,
 			device=device
 		)
-		logging.info(f"Loss {train_result.avg_loss}")
+		logging.info(f"{train_result}")
 
 		logging.info(f"{StepName.Test}")
-		test_result = test_step(
+		test_result = step(
 			model=model,
+			cm_fn=cm_fn,
 			dataloader=dataloaders[StepName.Test],
 			loss_fn=loss_fn,
 			device=device
 		)
-		logging.info(f"Loss {test_result.avg_loss}")
+		logging.info(f"{test_result}")
 
 		logging.info(f"{StepName.Validation}")
-		val_result = val_step(
+		val_result = step(
 			model=model,
+			cm_fn=cm_fn,
 			dataloader=dataloaders[StepName.Validation],
 			loss_fn=loss_fn,
 			device=device
 		)
-		logging.info(f"Loss {val_result.avg_loss}")
+		logging.info(f"{val_result}")
 
-		tracker.track_step({
+		tracker.track_epoch({
 			StepName.Train: train_result,
 			StepName.Test: test_result,
 			StepName.Validation: val_result
