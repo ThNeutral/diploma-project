@@ -11,6 +11,8 @@ from .save_model import save_model
 
 from tracking import ExperimentTracker
 
+from datasets.human_readable_classes import PLANT_VILLAGE_HUMAN_READABLE_LABELS
+
 from .model import get_model_input_size_1d, get_model_input_size_4d, build_model, get_eval_transform
 from datasets.data import get_dataset_from_folder
 from dto.training import StepName, ModelMetadata
@@ -118,7 +120,7 @@ def _train_from_config(
 
 	metadata = ModelMetadata(
 		input_size=get_model_input_size_4d(base_model_name),
-		classes=classes
+		classes=PLANT_VILLAGE_HUMAN_READABLE_LABELS
 	)
 
 	save_model(

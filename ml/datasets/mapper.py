@@ -1,77 +1,7 @@
 import torch
 import collections
 
-_PLANT_VILLAGE_CLASSES: list[str] = sorted([
-	"Apple__Apple_scab",
-	"Apple__Black_rot",
-	"Apple__Cedar_apple_rust",
-	"Apple__healthy",
-	"Blueberry__healthy",
-	"Cherry_(including_sour)__healthy",
-	"Cherry_(including_sour)__Powdery_mildew",
-	"Corn_(maize)__Cercospora_leaf_spot_Gray_leaf_spot",
-	"Corn_(maize)__Common_rust_",
-	"Corn_(maize)__healthy",
-	"Corn_(maize)__Northern_Leaf_Blight",
-	"Grape__Black_rot",
-	"Grape__Esca_(Black_Measles)",
-	"Grape__healthy",
-	"Grape__Leaf_blight_(Isariopsis_Leaf_Spot_)",
-	"Orange__Haunglongbing_(Citrus_greening)",
-	"Peach__Bacterial_spot",
-	"Peach__healthy",
-	"Pepper__bell__Bacterial_spot",
-	"Pepper__bell__healthy",
-	"Potato__Early_blight",
-	"Potato__healthy",
-	"Potato__Late_blight",
-	"Raspberry__healthy",
-	"Soybean__healthy",
-	"Squash__Powdery_mildew",
-	"Strawberry__healthy",
-	"Strawberry__Leaf_scorch",
-	"Tomato__Bacterial_spot",
-	"Tomato__Early_blight",
-	"Tomato__healthy",
-	"Tomato__Late_blight",
-	"Tomato__Leaf_Mold",
-	"Tomato__Septoria_leaf_spot",         
-	"Tomato__Spider_mites_Two-spotted_spider_mite",
-	"Tomato__Target_Spot",
-	"Tomato__Tomato_mosaic_virus",
-	"Tomato__Tomato_Yellow_Leaf_Curl_Virus",
-])
-
-_PLANT_DOC_CLASSES: list[str] = sorted([
-	"Apple leaf",
-	"Apple rust leaf",
-	"Apple Scab Leaf",
-	"Bell_pepper leaf",
-	"Bell_pepper leaf spot",
-	"Blueberry leaf",
-	"Cherry leaf",
-	"Corn Gray leaf spot",
-	"Corn leaf blight",
-	"Corn rust leaf",
-	"grape leaf",
-	"grape leaf black rot",
-	"Peach leaf",
-	"Potato leaf early blight",
-	"Potato leaf late blight",
-	"Raspberry leaf",
-	"Soyabean leaf",
-	"Squash Powdery mildew leaf",
-	"Strawberry leaf",
-	"Tomato Early blight leaf",
-	"Tomato leaf",
-	"Tomato leaf bacterial spot",
-	"Tomato leaf late blight",
-	"Tomato leaf mosaic virus",
-	"Tomato leaf yellow virus",
-	"Tomato mold leaf",
-	"Tomato Septoria leaf spot",
-	"Tomato two spotted spider mites leaf"
-])
+from .classes import PLANT_DOC_CLASSES, PLANT_VILLAGE_CLASSES
 
 _PLANT_DOC_TO_PLANT_VILLAGE: collections.OrderedDict[str, str] = collections.OrderedDict(
 	sorted(
@@ -108,11 +38,11 @@ _PLANT_DOC_TO_PLANT_VILLAGE: collections.OrderedDict[str, str] = collections.Ord
 	)
 )
 
-assert len(_PLANT_DOC_CLASSES) == len(_PLANT_DOC_TO_PLANT_VILLAGE)
+assert len(PLANT_DOC_CLASSES) == len(_PLANT_DOC_TO_PLANT_VILLAGE)
 
 for (key, value) in _PLANT_DOC_TO_PLANT_VILLAGE.items():
-	assert key in _PLANT_DOC_CLASSES, key
-	assert value in _PLANT_VILLAGE_CLASSES, value
+	assert key in PLANT_DOC_CLASSES, key
+	assert value in PLANT_VILLAGE_CLASSES, value
 
 
 def map_plant_doc_to_plant_village(plant_doc_tensor: torch.Tensor, device: torch.device) -> torch.Tensor:
@@ -123,11 +53,11 @@ def map_plant_doc_to_plant_village(plant_doc_tensor: torch.Tensor, device: torch
 		plant_doc_index = entry.item()
 		assert type(plant_doc_index) is int
 
-		plant_doc_class_str = _PLANT_DOC_CLASSES[plant_doc_index]
+		plant_doc_class_str = PLANT_DOC_CLASSES[plant_doc_index]
 		plant_village_class_str = _PLANT_DOC_TO_PLANT_VILLAGE.get(plant_doc_class_str)
 		assert plant_village_class_str
 		
-		plant_doc_index = _PLANT_VILLAGE_CLASSES.index(plant_village_class_str)
+		plant_doc_index = PLANT_VILLAGE_CLASSES.index(plant_village_class_str)
 		mapped_tensor[tensor_index] = plant_doc_index
 
 	return mapped_tensor.type(torch.long).to(device)
@@ -142,7 +72,7 @@ if __name__ == "__main__":
 
 	plant_doc_tensor = torch.from_numpy(
 		numpy.array([
-			_PLANT_DOC_CLASSES.index(entry) 
+			PLANT_DOC_CLASSES.index(entry) 
 			for entry in ["grape leaf black rot", "Tomato Early blight leaf", "Tomato leaf yellow virus"]])
 	).to(device)
 
