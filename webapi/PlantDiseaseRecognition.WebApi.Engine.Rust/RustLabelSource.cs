@@ -5,7 +5,7 @@ using PlantDiseaseRecognition.WebApi.Engine.Rust.Wrappers;
 
 namespace PlantDiseaseRecognition.WebApi.Engine.Rust;
 
-public class RustLabelSource : ILabelSource
+public class RustLabelSource : IMetadataSource
 {
 	private readonly ILogger<RustLabelSource> _logger;
 

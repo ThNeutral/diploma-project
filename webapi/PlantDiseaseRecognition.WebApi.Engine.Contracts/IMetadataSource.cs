@@ -1,6 +1,7 @@
 namespace PlantDiseaseRecognition.WebApi.Engine.Contracts;
 
-public interface ILabelSource
+public interface IMetadataSource
 {
 	IReadOnlyList<string> GetLabels();
+	IReadOnlyList<int> GetInputSize();
 }

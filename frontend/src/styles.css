@@ -1,0 +1,34 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import 'tailwindcss';
+@import 'ngx-toastr/toastr';
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+
+:root {
+  --color-bg-primary: #0d0f14;
+  --color-bg-card: #161a24;
+  --color-bg-elevated: #1e2230;
+
+  --color-accent: #5b8af0;
+  --color-accent-muted: #2a3f7a;
+
+  --color-success: #3ddc97;
+  --color-success-muted: #1a5c40;
+
+  --color-text-primary: #f0f2f8;
+  --color-text-secondary: #9ba3af;
+  --color-text-muted: #6b7280;
+
+  --color-border: #252a38;
+  --color-border-accent: #2e3a5c;
+
+  --border-radius-sm: 6px;
+  --border-radius-md: 10px;
+  --border-radius-lg: 16px;
+}

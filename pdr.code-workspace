@@ -10,12 +10,20 @@
 		},
 		{
 			"path": "models",
-			"name": "Machine Learning"
+			"name": "Models"
 		},
 		{
 			"path": "document",
 			"name": "Documents"
 		},
+		{
+			"path": "frontend",
+			"name": "Frontend"
+		},
+		{
+			"path": ".",
+			"name": "Root"
+		}
 		// Open this separately, since Pylance is weird about .code-workspace project
 		// {
 		// 	"path": "ml",

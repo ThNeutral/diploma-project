@@ -11,7 +11,7 @@ public static class ServiceCollectionExtensions
 		services.AddSingleton(configuration);
 
 		services.AddSingleton<IInferenceEngine, RustInferenceEngine>();
-		services.AddSingleton<ILabelSource, RustLabelSource>();
+		services.AddSingleton<IMetadataSource, RustLabelSource>();
 		services.AddHostedService<RustLoggerService>();
 		services.AddHostedService<RustModelInitializerService>();
 	}
