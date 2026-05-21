@@ -23,13 +23,13 @@ public class RustInferenceEngine : IInferenceEngine
 		_configuration = configuration;
 	}
 
-	public unsafe float Infer(string base64EncodedImage, int width, int height)
+	public unsafe float Infer(Stream data, int width, int height)
 	{
 		var size = 3 * width * height;
 		var buffer = Pool.Rent(size);
 		try
 		{
-			ParseImageIntoBuffer(base64EncodedImage, buffer, width, height);
+			ParseStreamIntoBuffer(data, buffer, width, height);
 			fixed (float* bufferPtr = buffer)
 			{
 				var view = new ImageView()
@@ -69,15 +69,14 @@ public class RustInferenceEngine : IInferenceEngine
 		}
 	}
 
-	private void ParseImageIntoBuffer(
-		string base64EncodedImage,
+	private static void ParseStreamIntoBuffer(
+		Stream data,
 		float[] buffer,
 		int width,
 		int height
 	)
 	{
-		var bytes = Convert.FromBase64String(base64EncodedImage);
-		using var image = Image.Load<Rgb24>(bytes);
+		using var image = Image.Load<Rgb24>(data);
 
 		image.ProcessPixelRows(accessor =>
 		{

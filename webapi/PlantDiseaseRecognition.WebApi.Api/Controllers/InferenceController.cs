@@ -19,11 +19,11 @@ public class InferenceController : ControllerBase
 		_inferenceEngine = inferenceEngine;
 	}
 
-	public record InferRequest(string base64_encoded_image);
+	public record InferRequest(IEnumerable<byte> Data, int Height, int Width);
 
 	[HttpPost]
-	public async Task<IActionResult> Infer([FromBody] InferRequest req)
+	public async Task<IActionResult> Infer([FromQuery] int width, [FromQuery] int height)
 	{
-		return Ok(_inferenceEngine.Infer(req.base64_encoded_image, 224, 224));
+		return Ok(_inferenceEngine.Infer(Request.Body, width, height));
 	}
 }

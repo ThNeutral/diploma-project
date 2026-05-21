@@ -1,0 +1,41 @@
+.btn-infer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 10px 24px;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-accent-muted);
+  background: var(--color-accent-muted);
+
+  color: var(--color-accent);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.btn-infer:hover {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #0d0f14;
+  box-shadow: 0 0 20px rgba(91, 138, 240, 0.25);
+}
+
+.btn-infer:active {
+  transform: scale(0.98);
+}
+
+.btn-infer:disabled {
+  background: var(--color-bg-elevated);
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  box-shadow: none;
+}

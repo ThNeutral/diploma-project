@@ -1,34 +1,6 @@
 <main class="main">
   <div class="main-box">
-    <div class="image-section">
-      <canvas #previewCanvas [width]="imageWidth" [height]="imageHeight"></canvas>
-      <div
-        class="file-input"
-        (click)="fileInput.click()"
-        (dragover)="onDragOver($event)"
-        (dragleave)="onDragLeave()"
-        (drop)="onDrop($event)"
-        [class.hovered]="isDragging()"
-      >
-        <input
-          #fileInput
-          type="file"
-          accept="image/*"
-          (change)="onFileSelected($event)"
-          style="display: none"
-        />
-        <label class="file-input-overlay">
-          <img ngSrc="load_icon.svg" width="32" height="32" />
-          <span><strong>Click to upload</strong> or drag and drop</span>
-          <span>PNG, JPG, WEBP</span>
-        </label>
-      </div>
-    </div>
-    <div>
-      <h3>Predictions</h3>
-      @for (label of labels(); track label[0]) {
-        <div>{{ label }}</div>
-      }
-    </div>
+    <app-image-upload (onImageReady)="onImageReady($event)" />
+    <app-prediction-result />
   </div>
 </main>

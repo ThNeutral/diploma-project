@@ -1,0 +1,24 @@
+<div class="image-section">
+  <canvas #previewCanvas [width]="inputWidth" [height]="inputHeight"></canvas>
+  <div
+    class="file-input"
+    (click)="fileInput.click()"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave()"
+    (drop)="onDrop($event)"
+    [class.hovered]="isDragging()"
+  >
+    <input
+      #fileInput
+      type="file"
+      accept="image/*"
+      (change)="onFileSelected($event)"
+      style="display: none"
+    />
+    <label class="file-input-overlay">
+      <img ngSrc="load_icon.svg" width="32" height="32" />
+      <span><strong>Click to upload</strong> or drag and drop</span>
+      <span>PNG, JPG, WEBP</span>
+    </label>
+  </div>
+</div>

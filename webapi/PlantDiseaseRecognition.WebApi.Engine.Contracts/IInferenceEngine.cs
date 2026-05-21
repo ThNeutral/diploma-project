@@ -2,5 +2,5 @@
 
 public interface IInferenceEngine
 {
-	float Infer(string base64EncodedImage, int width, int height);
+	float Infer(Stream data, int width, int height);
 }

@@ -12,12 +12,6 @@
   color: #fff;
 }
 
-.image-section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
 .main-box {
   padding: 8px;
   background-color: var(--color-bg-card);
@@ -32,55 +26,4 @@
 
   display: flex;
   gap: 16px;
-}
-
-.file-input {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 8px;
-
-  padding: 2.5rem;
-  border-radius: var(--border-radius-lg);
-  border: 1.5px dashed var(--color-border-accent);
-  background: var(--color-bg-card);
-  box-shadow:
-    0 0 0 1px var(--color-border),
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    0 0 24px rgba(91, 138, 240, 0.06);
-
-  cursor: pointer;
-  transition:
-    border-color 0.2s,
-    background 0.2s;
-}
-
-.file-input:hover,
-.hovered {
-  border-color: var(--color-accent);
-  background: var(--color-bg-elevated);
-}
-
-.file-input span {
-  font-size: 14px;
-  color: var(--color-text-muted);
-}
-
-.file-input span strong {
-  color: var(--color-accent);
-  font-weight: 500;
-}
-
-.file-input-overlay {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-input[type='file'] {
-  display: none;
 }

@@ -1,53 +1,57 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { ConfigService } from "./ConfigService.service";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ConfigService } from './ConfigService.service';
 
 @Injectable({
-	providedIn: "root"
+  providedIn: 'root',
 })
 export class HttpClientWrapper {
-	public constructor(
-		private client: HttpClient,
-		private config: ConfigService
-	) { }
+  public constructor(
+    private client: HttpClient,
+    private config: ConfigService,
+  ) {}
 
-	public getLabels(): Observable<GetLabelsResponse> {
-		var response: GetLabelsResponse = {
-			labels: ["one", "two", "three"]
-		};
-		return new Observable(subcriber => {
-			// subcriber.next(response);
-			subcriber.error("Error");
-			subcriber.complete();
-		});
+  public getLabels(): Observable<GetLabelsResponse> {
+    const url = this.getApiUrl(this.config.endpoints.labels);
+    return this.client.get<GetLabelsResponse>(url);
+  }
 
-		const url = this.getApiUrl(this.config.endpoints.labels);
-		return this.client.get<GetLabelsResponse>(url);
-	}
+  public getInputSize(): Observable<GetInputSizeResponse> {
+    const url = this.getApiUrl(this.config.endpoints.inputSize);
+    return this.client.get<GetInputSizeResponse>(url);
+  }
 
-	public getInputSize(): Observable<GetInputSizeResponse> {
-		var response: GetInputSizeResponse = {
-			input_size: [3, 384, 384]
-		};
-		return new Observable(subcriber => {
-			subcriber.next(response);
-			subcriber.complete();
-		});
-		
-		const url = this.getApiUrl(this.config.endpoints.inputSize);
-		return this.client.get<GetInputSizeResponse>(url);
-	}
+  public postInference(
+    image: ImageData,
+    width: number,
+    height: number,
+  ): Observable<PostInferenceResponse> {
+    const urlParams = new URLSearchParams({ width: '' + width, height: '' + height });
+    const url = this.getApiUrl(this.config.endpoints.inputSize, urlParams);
+    return this.client.post<PostInferenceResponse>(url, image, {
+      headers: { 'Content-Type': 'application/octet-stream' },
+    });
+  }
 
-	private getApiUrl(endpoint: string) {
-		return this.config.baseApiUrl + this.config.versionSlug + endpoint;
-	}
+  private getApiUrl(endpoint: string, urlParams?: URLSearchParams) {
+    let url = this.config.baseApiUrl + this.config.versionSlug + endpoint;
+    if (urlParams) {
+      url += `?${urlParams}`;
+    }
+
+    return url;
+  }
 }
 
 interface GetLabelsResponse {
-	labels: string[]
+  labels: string[];
 }
 
 interface GetInputSizeResponse {
-	input_size: [number, number, number]
+  input_size: [number, number, number];
+}
+
+interface PostInferenceResponse {
+  top_five_candidates: [string, number][];
 }
