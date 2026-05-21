@@ -1,30 +1,28 @@
 <main class="main">
   <div class="main-box">
-    <div class="file-input" [style.height.px]="inputSize()[1]" [style.width.px]="inputSize()[2]">
-      <input
-        #fileInput
-        type="file"
-        accept="image/*"
-        (change)="onFileSelected($event)"
-        style="display: none"
-      />
-
-      @if (!hasImage()) {
-        <label class="file-input__overlay" (click)="fileInput.click()">
+    <div class="image-section">
+      <canvas #previewCanvas [width]="imageWidth" [height]="imageHeight"></canvas>
+      <div
+        class="file-input"
+        (click)="fileInput.click()"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave()"
+        (drop)="onDrop($event)"
+        [class.hovered]="isDragging()"
+      >
+        <input
+          #fileInput
+          type="file"
+          accept="image/*"
+          (change)="onFileSelected($event)"
+          style="display: none"
+        />
+        <label class="file-input-overlay">
           <img ngSrc="load_icon.svg" width="32" height="32" />
           <span><strong>Click to upload</strong> or drag and drop</span>
           <span>PNG, JPG, WEBP</span>
         </label>
-      }
-
-      <canvas
-        #previewCanvas
-        [width]="inputSize()[2]"
-        [height]="inputSize()[1]"
-        [style.cursor]="hasImage() ? 'pointer' : 'default'"
-        (click)="hasImage() && fileInput.click()"
-      >
-      </canvas>
+      </div>
     </div>
     <div>
       <h3>Predictions</h3>

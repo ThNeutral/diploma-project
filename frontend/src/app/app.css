@@ -12,6 +12,12 @@
   color: #fff;
 }
 
+.image-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .main-box {
   padding: 8px;
   background-color: var(--color-bg-card);
@@ -51,7 +57,8 @@
     background 0.2s;
 }
 
-.file-input:hover {
+.file-input:hover,
+.hovered {
   border-color: var(--color-accent);
   background: var(--color-bg-elevated);
 }
@@ -64,6 +71,14 @@
 .file-input span strong {
   color: var(--color-accent);
   font-weight: 500;
+}
+
+.file-input-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 input[type='file'] {

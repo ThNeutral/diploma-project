@@ -10,29 +10,8 @@ import { NgOptimizedImage } from '@angular/common';
   imports: [NgOptimizedImage],
 })
 export class App implements OnInit {
-  @ViewChild('previewCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('previewCanvas') protected canvasRef!: ElementRef<HTMLCanvasElement>;
 
-  protected hasImage = signal(false);
-  async onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
-
-    // reset so the same file can be re-selected
-    input.value = '';
-
-    const [width, height] = [this.inputSize()[2], this.inputSize()[1]];
-    console.log(width, height);
-    const img = new Image();
-    img.src = URL.createObjectURL(file);
-
-    img.onload = () => {
-      const ctx = this.canvasRef.nativeElement.getContext('2d')!;
-      ctx.drawImage(img, 0, 0, width, height);
-      URL.revokeObjectURL(img.src);
-      this.hasImage.set(true);
-    };
-  }
   private metadataService = inject(MetadataService);
   private toastrService = inject(ToastrService);
 
@@ -41,6 +20,14 @@ export class App implements OnInit {
 
   protected loadingInputSize = signal(true);
   protected inputSize = signal<[number, number, number]>([3, 384, 384]);
+  protected get imageWidth() {
+    return this.inputSize()[2];
+  }
+  protected get imageHeight() {
+    return this.inputSize()[1];
+  }
+
+  protected isDragging = signal(false);
 
   public constructor() {}
 
@@ -72,5 +59,43 @@ export class App implements OnInit {
   private setInputSize(inputSize: [number, number, number]) {
     this.inputSize.set([...inputSize]);
     this.loadingInputSize.set(false);
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    this.isDragging.set(true);
+  }
+
+  onDragLeave() {
+    this.isDragging.set(false);
+  }
+
+  protected onDrop(event: DragEvent) {
+    event.preventDefault();
+    this.isDragging.set(false);
+
+    const file = event.dataTransfer?.files?.[0];
+    if (!file || !file.type.startsWith('image/')) return;
+
+    this.loadImage(file);
+  }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    input.value = '';
+    this.loadImage(file);
+  }
+
+  loadImage(file: File) {
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+
+    img.onload = () => {
+      const ctx = this.canvasRef.nativeElement.getContext('2d')!;
+      ctx.drawImage(img, 0, 0, this.imageWidth, this.imageHeight);
+      URL.revokeObjectURL(img.src);
+    };
   }
 }
