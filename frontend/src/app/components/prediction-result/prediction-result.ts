@@ -1,10 +1,11 @@
 import { Component, computed, inject, Input, signal } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { InferenceService } from '../../../services/InferenceService.service';
+import { DataBar } from '../data-bar/data-bar';
 
 @Component({
   selector: 'app-prediction-result',
-  imports: [],
+  imports: [DataBar],
   templateUrl: './prediction-result.html',
   styleUrl: './prediction-result.css',
 })

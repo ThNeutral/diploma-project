@@ -12,6 +12,7 @@ import {
 import { NgOptimizedImage } from '@angular/common';
 import { MetadataService } from '../../../services/MetadataService.service';
 import { ToastrService } from 'ngx-toastr';
+import { BreakpointObserver } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-image-upload',
@@ -26,12 +27,21 @@ export class ImageUpload {
 
   private metadataService = inject(MetadataService);
   private toastrService = inject(ToastrService);
+  private breakpointObserver = inject(BreakpointObserver);
 
   protected inputSize = signal<[number, number, number]>([3, 384, 384]);
   protected inputWidth = computed(() => this.inputSize()[1]);
   protected inputHeight = computed(() => this.inputSize()[2]);
 
   protected isDragging = signal(false);
+
+  protected isMobile = signal(false);
+
+  public constructor() {
+    this.breakpointObserver
+      .observe('(max-width: 1100px)')
+      .subscribe((result) => this.isMobile.set(result.matches));
+  }
 
   protected loadInputSize() {
     this.metadataService.getInputSize().subscribe({

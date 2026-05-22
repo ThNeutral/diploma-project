@@ -17,7 +17,12 @@
     />
     <label class="file-input-overlay">
       <img ngSrc="load_icon.svg" width="32" height="32" />
-      <span><strong>Click to upload</strong> or drag and drop</span>
+      <span>
+        <strong>Click to upload</strong>
+        @if (!isMobile()) {
+          or drag and drop
+        }
+      </span>
       <span>PNG, JPG, WEBP</span>
     </label>
   </div>

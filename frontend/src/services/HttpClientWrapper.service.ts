@@ -29,9 +29,9 @@ export class HttpClientWrapper {
   ): Observable<PostInferenceResponse> {
     const response: PostInferenceResponse = {
       top_five_candidates: [
-        ['Very Long Label aaaaaaaa aaaaaa aaa', 0.1],
-        ['b', 0.3],
-        ['c', 0.2],
+        ['Very Long Label aaaaaaaa aaaaaa aaa', Math.random()],
+        ['b', Math.random()],
+        ['c', Math.random()],
       ],
     };
     return new Observable((subscriber) => {

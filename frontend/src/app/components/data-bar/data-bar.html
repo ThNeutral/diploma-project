@@ -1,0 +1,6 @@
+<div
+  class="confidence-foreground"
+  [style.--target-width.%]="(value / totalValue) * maxWidth"
+  [style.z-index]="1"
+></div>
+<div class="confidence-background" [style.width.%]="maxWidth" [style.z-index]="0"></div>

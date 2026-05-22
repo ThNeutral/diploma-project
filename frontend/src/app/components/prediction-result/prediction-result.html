@@ -10,12 +10,7 @@
           <div class="prediction-row-label">{{ result[0] }}</div>
         </td>
         <td class="confidence-row">
-          <div
-            class="confidence-foreground"
-            [style.width.%]="(result[1] / result[2]) * 90"
-            [style.z-index]="1"
-          ></div>
-          <div class="confidence-background" [style.width.%]="90" [style.z-index]="0"></div>
+          <app-data-bar [value]="result[1]" [totalValue]="result[2]" [maxWidth]="95" />
         </td>
       </tr>
     }
@@ -26,11 +21,11 @@
     (click)="onStartInference($event)"
   >
     @if (!inputImage) {
-      Please upload image.
+      Please upload image
     } @else if (loadingResults()) {
       Running inference...
     } @else {
-      Run inference.
+      Run inference
     }
   </button>
 </div>
