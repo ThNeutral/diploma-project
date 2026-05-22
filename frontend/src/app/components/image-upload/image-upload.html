@@ -1,5 +1,5 @@
 <div class="image-section">
-  <canvas #previewCanvas [width]="inputWidth" [height]="inputHeight"></canvas>
+  <canvas #previewCanvas [width]="inputWidth()" [height]="inputHeight()"></canvas>
   <div
     class="file-input"
     (click)="fileInput.click()"

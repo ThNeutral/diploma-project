@@ -1,6 +1,6 @@
 <main class="main">
   <div class="main-box">
     <app-image-upload (onImageReady)="onImageReady($event)" />
-    <app-prediction-result />
+    <app-prediction-result [inputImage]="selectedImageData()" />
   </div>
 </main>

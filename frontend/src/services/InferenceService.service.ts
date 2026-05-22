@@ -11,8 +11,9 @@ export class InferenceService {
     width: number,
     height: number,
   ): Observable<[string, number][]> {
+    var buffer = new Uint8Array(image.data);
     return this.httpClient
-      .postInference(image, width, height)
+      .postInference(buffer, width, height)
       .pipe(map((x) => x.top_five_candidates));
   }
 }

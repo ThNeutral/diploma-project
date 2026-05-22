@@ -23,10 +23,22 @@ export class HttpClientWrapper {
   }
 
   public postInference(
-    image: ImageData,
+    image: Uint8Array,
     width: number,
     height: number,
   ): Observable<PostInferenceResponse> {
+    const response: PostInferenceResponse = {
+      top_five_candidates: [
+        ['Very Long Label aaaaaaaa aaaaaa aaa', 0.1],
+        ['b', 0.3],
+        ['c', 0.2],
+      ],
+    };
+    return new Observable((subscriber) => {
+      subscriber.next(response);
+      subscriber.complete();
+    });
+
     const urlParams = new URLSearchParams({ width: '' + width, height: '' + height });
     const url = this.getApiUrl(this.config.endpoints.inputSize, urlParams);
     return this.client.post<PostInferenceResponse>(url, image, {

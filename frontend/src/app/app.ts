@@ -13,6 +13,8 @@ import { PredictionResult } from './components/prediction-result/prediction-resu
 export class App implements OnInit {
   private toastrService = inject(ToastrService);
 
+  protected selectedImageData = signal<ImageData | null>(null);
+
   public constructor() {}
 
   public ngOnInit(): void {}
@@ -23,6 +25,6 @@ export class App implements OnInit {
       return;
     }
 
-    imageData.data;
+    this.selectedImageData.set(imageData);
   }
 }
