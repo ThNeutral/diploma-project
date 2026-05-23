@@ -10,6 +10,13 @@ public struct StringArray
 }
 
 [StructLayout(LayoutKind.Sequential)]
+public struct UsizeArray
+{
+	public IntPtr Ptr;
+	public nuint Len;
+}
+
+[StructLayout(LayoutKind.Sequential)]
 public struct ImageView
 {
 	public IntPtr Ptr;

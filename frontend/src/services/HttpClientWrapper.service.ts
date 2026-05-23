@@ -27,20 +27,8 @@ export class HttpClientWrapper {
     width: number,
     height: number,
   ): Observable<PostInferenceResponse> {
-    const response: PostInferenceResponse = {
-      top_five_candidates: [
-        ['Very Long Label aaaaaaaa aaaaaa aaa', Math.random()],
-        ['b', Math.random()],
-        ['c', Math.random()],
-      ],
-    };
-    return new Observable((subscriber) => {
-      subscriber.next(response);
-      subscriber.complete();
-    });
-
     const urlParams = new URLSearchParams({ width: '' + width, height: '' + height });
-    const url = this.getApiUrl(this.config.endpoints.inputSize, urlParams);
+    const url = this.getApiUrl(this.config.endpoints.inference, urlParams);
     return this.client.post<PostInferenceResponse>(url, image, {
       headers: { 'Content-Type': 'application/octet-stream' },
     });
@@ -61,9 +49,9 @@ interface GetLabelsResponse {
 }
 
 interface GetInputSizeResponse {
-  input_size: [number, number, number];
+  input_size: [number, number, number, number];
 }
 
 interface PostInferenceResponse {
-  top_five_candidates: [string, number][];
+  results: Record<number, number>;
 }

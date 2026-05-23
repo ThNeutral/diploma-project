@@ -5,6 +5,7 @@ import {
   EventEmitter,
   inject,
   Input,
+  OnInit,
   Output,
   signal,
   ViewChild,
@@ -20,7 +21,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
   templateUrl: './image-upload.html',
   styleUrl: './image-upload.css',
 })
-export class ImageUpload {
+export class ImageUpload implements OnInit {
   @ViewChild('previewCanvas') protected canvasRef!: ElementRef<HTMLCanvasElement>;
 
   @Output() public onImageReady = new EventEmitter<ImageData>();
@@ -29,18 +30,20 @@ export class ImageUpload {
   private toastrService = inject(ToastrService);
   private breakpointObserver = inject(BreakpointObserver);
 
-  protected inputSize = signal<[number, number, number]>([3, 384, 384]);
-  protected inputWidth = computed(() => this.inputSize()[1]);
-  protected inputHeight = computed(() => this.inputSize()[2]);
+  protected inputSize = signal<[number, number, number, number]>([1, 3, 384, 384]);
+  protected inputWidth = computed(() => this.inputSize()[2]);
+  protected inputHeight = computed(() => this.inputSize()[3]);
 
   protected isDragging = signal(false);
 
   protected isMobile = signal(false);
 
-  public constructor() {
+  public ngOnInit() {
     this.breakpointObserver
       .observe('(max-width: 1100px)')
       .subscribe((result) => this.isMobile.set(result.matches));
+
+    this.loadInputSize();
   }
 
   protected loadInputSize() {

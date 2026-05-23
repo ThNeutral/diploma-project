@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class ConfigService {
   public get baseApiUrl() {
-    return 'http://localhost:5005';
+    return 'http://localhost:5002';
   }
 
   public get versionSlug() {

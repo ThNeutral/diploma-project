@@ -10,10 +10,12 @@ export class InferenceService {
     image: ImageData,
     width: number,
     height: number,
-  ): Observable<[string, number][]> {
+  ): Observable<[number, number][]> {
     var buffer = new Uint8Array(image.data);
     return this.httpClient
       .postInference(buffer, width, height)
-      .pipe(map((x) => x.top_five_candidates));
+      .pipe(
+        map((x) => Object.entries(x.results).map(([k, v]) => [Number(k), v] as [number, number])),
+      );
   }
 }

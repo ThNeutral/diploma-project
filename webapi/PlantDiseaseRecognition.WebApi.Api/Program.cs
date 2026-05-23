@@ -1,10 +1,7 @@
 using System.Text.Json;
 using PlantDiseaseRecognition.WebApi.Api.Configurations;
 using PlantDiseaseRecognition.WebApi.Api.Extensions;
-using PlantDiseaseRecognition.WebApi.Api.Models;
-using PlantDiseaseRecognition.WebApi.Engine.Rust.Configurations;
 using PlantDiseaseRecognition.WebApi.Engine.Rust.IoC;
-using PlantDiseaseRecognition.WebApi.Engine.Rust.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,12 +16,21 @@ builder.Services
 	.AddControllers()
 	.AddJsonOptions(o =>
 	{
-		o.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.KebabCaseLower;
+		o.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
 	});
 
 builder.Services
 	.AddApiVersioning()
 	.AddMvc();
+
+var corsAllowAllPolicyName = "AllowAll";
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy(corsAllowAllPolicyName, policy =>
+	{
+		policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+	});
+});
 
 var config = builder
 	.Services
@@ -38,6 +44,8 @@ builder.Services
 	.AddRustEngine(config.RustEngine);
 
 var app = builder.Build();
+
+app.UseCors(corsAllowAllPolicyName);
 
 app.UseExceptionHandler();
 

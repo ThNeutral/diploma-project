@@ -10,8 +10,8 @@ public static class ServiceCollectionExtensions
 	{
 		services.AddSingleton(configuration);
 
-		services.AddSingleton<IInferenceEngine, RustInferenceEngine>();
-		services.AddSingleton<IMetadataSource, RustLabelSource>();
+		services.AddScoped<IInferenceEngine, RustInferenceEngine>();
+		services.AddScoped<IMetadataSource, RustMetadataSource>();
 		services.AddHostedService<RustLoggerService>();
 		services.AddHostedService<RustModelInitializerService>();
 	}

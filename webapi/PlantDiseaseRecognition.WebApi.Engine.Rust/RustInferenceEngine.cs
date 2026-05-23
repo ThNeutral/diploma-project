@@ -23,45 +23,14 @@ public class RustInferenceEngine : IInferenceEngine
 		_configuration = configuration;
 	}
 
-	public unsafe float Infer(Stream data, int width, int height)
+	public async Task<IReadOnlyList<float>> InferAsync(Stream data, int width, int height)
 	{
 		var size = 3 * width * height;
 		var buffer = Pool.Rent(size);
 		try
 		{
-			ParseStreamIntoBuffer(data, buffer, width, height);
-			fixed (float* bufferPtr = buffer)
-			{
-				var view = new ImageView()
-				{
-					Ptr = (IntPtr)bufferPtr,
-					Len = (nuint)size,
-					Width = (uint)width,
-					Height = (uint)height,
-					Channels = 3
-				};
-
-				switch (_configuration.DeviceType)
-				{
-					case DeviceType.Cpu:
-						{
-							RustWrapper.run_inference_on_cpu(view);
-							return 1;
-						}
-					case DeviceType.Gpu:
-						{
-							RustWrapper.run_inference_on_gpu(view);
-							return 1;
-						}
-					default:
-						throw new UnreachableException($"Invalid DeviceType: {_configuration.DeviceType}");
-				}
-			}
-		}
-		catch (Exception e)
-		{
-			_logger.LogError(e, "[{function_name}] Failed", nameof(Infer));
-			return -1;
+			await ParseStreamIntoBufferAsync(data, buffer, width, height);
+			return RunInferenceOnBuffer(buffer, width, height, size);
 		}
 		finally
 		{
@@ -69,14 +38,42 @@ public class RustInferenceEngine : IInferenceEngine
 		}
 	}
 
-	private static void ParseStreamIntoBuffer(
+	private unsafe IReadOnlyList<float> RunInferenceOnBuffer(float[] buffer, int width, int height, int size)
+	{
+		fixed (float* bufferPtr = buffer)
+		{
+			var view = new ImageView()
+			{
+				Ptr = (IntPtr)bufferPtr,
+				Len = (nuint)size,
+				Width = (uint)width,
+				Height = (uint)height,
+				Channels = 3
+			};
+
+			return _configuration.DeviceType switch
+			{
+				DeviceType.Cpu => RustWrapper.run_inference_on_cpu(view),
+				DeviceType.Gpu => RustWrapper.run_inference_on_gpu(view),
+				_ => throw new UnreachableException($"Invalid DeviceType: {_configuration.DeviceType}")
+			};
+		}
+	}
+
+	private async Task ParseStreamIntoBufferAsync(
 		Stream data,
 		float[] buffer,
 		int width,
 		int height
 	)
 	{
-		using var image = Image.Load<Rgb24>(data);
+		using var image = await Image.LoadAsync<Rgb24>(data);
+
+		if (image.Width != width || image.Height != height)
+		{
+			_logger.LogWarning($"Image check failed. Received 3x{width}x{width}. Expected 3x{image.Width}x{image.Height}");
+			throw new InvalidOperationException($"Invalid image size. Expected 3x{width}x{height}");
+		}
 
 		image.ProcessPixelRows(accessor =>
 		{

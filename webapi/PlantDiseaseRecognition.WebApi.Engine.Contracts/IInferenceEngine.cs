@@ -2,5 +2,5 @@
 
 public interface IInferenceEngine
 {
-	float Infer(Stream data, int width, int height);
+	Task<IReadOnlyList<float>> InferAsync(Stream data, int width, int height);
 }
