@@ -28,20 +28,14 @@ public class InferenceController : ControllerBase
 	}
 
 	public record InferRequest(int Height, int Width);
-	public record InferResponse(IReadOnlyDictionary<int, float> Predictions);
+	public record InferResponse(IReadOnlyList<float> Predictions);
 
 	[HttpPost]
-	public async Task<IActionResult> Infer([FromQuery] int width, [FromQuery] int height)
+	public async Task<IActionResult> Infer()
 	{
 		var inputSize = _metadataSource.GetInputSize();
-		var (expectedWidth, expectedHeight) = (inputSize[2], inputSize[3]);
-		if (width != expectedWidth || height != expectedHeight)
-		{
-			_logger.LogWarning($"Metadata check failed. Received 3x{width}x{width}. Expected 3x{expectedWidth}x{expectedHeight}");
-			return BadRequest(ErrorResponse.WithMessage($"Invalid size of image. Expected 3x{expectedWidth}x{expectedHeight}"));
-		}
-
-		var results = _inferenceEngine.Infer(Request.Body, width, height);
+		var (width, height) = (inputSize[2], inputSize[3]);
+		var results = await _inferenceEngine.InferAsync(Request.Body, width, height);
 
 		return Ok(new InferResponse(results));
 	}

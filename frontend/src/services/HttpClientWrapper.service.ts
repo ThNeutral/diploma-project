@@ -22,13 +22,8 @@ export class HttpClientWrapper {
     return this.client.get<GetInputSizeResponse>(url);
   }
 
-  public postInference(
-    image: Uint8Array,
-    width: number,
-    height: number,
-  ): Observable<PostInferenceResponse> {
-    const urlParams = new URLSearchParams({ width: '' + width, height: '' + height });
-    const url = this.getApiUrl(this.config.endpoints.inference, urlParams);
+  public postInference(image: Blob): Observable<PostInferenceResponse> {
+    const url = this.getApiUrl(this.config.endpoints.inference);
     return this.client.post<PostInferenceResponse>(url, image, {
       headers: { 'Content-Type': 'application/octet-stream' },
     });
@@ -53,5 +48,5 @@ interface GetInputSizeResponse {
 }
 
 interface PostInferenceResponse {
-  results: Record<number, number>;
+  predictions: number[];
 }

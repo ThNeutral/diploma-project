@@ -46,17 +46,20 @@ public class RustInferenceEngine : IInferenceEngine
 			{
 				Ptr = (IntPtr)bufferPtr,
 				Len = (nuint)size,
-				Width = (uint)width,
-				Height = (uint)height,
+				Width = (nuint)width,
+				Height = (nuint)height,
 				Channels = 3
 			};
 
+			_logger.LogInformation($"Sending ImageView({view.Len}: {view.Channels}x{view.Width}x{view.Height}) to Rust.");
+
 			return _configuration.DeviceType switch
 			{
-				DeviceType.Cpu => RustWrapper.run_inference_on_cpu(view),
-				DeviceType.Gpu => RustWrapper.run_inference_on_gpu(view),
+				DeviceType.Cpu => RustWrapper.run_inference_on_cpu(view).ToList(),
+				DeviceType.Gpu => RustWrapper.run_inference_on_gpu(view).ToList(),
 				_ => throw new UnreachableException($"Invalid DeviceType: {_configuration.DeviceType}")
-			};
+			}
+		;
 		}
 	}
 
@@ -68,12 +71,8 @@ public class RustInferenceEngine : IInferenceEngine
 	)
 	{
 		using var image = await Image.LoadAsync<Rgb24>(data);
+		_logger.LogInformation($"Received image of size {image.Width}x{image.Height}");
 
-		if (image.Width != width || image.Height != height)
-		{
-			_logger.LogWarning($"Image check failed. Received 3x{width}x{width}. Expected 3x{image.Width}x{image.Height}");
-			throw new InvalidOperationException($"Invalid image size. Expected 3x{width}x{height}");
-		}
 
 		image.ProcessPixelRows(accessor =>
 		{

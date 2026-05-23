@@ -24,7 +24,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 export class ImageUpload implements OnInit {
   @ViewChild('previewCanvas') protected canvasRef!: ElementRef<HTMLCanvasElement>;
 
-  @Output() public onImageReady = new EventEmitter<ImageData>();
+  @Output() public onImageReady = new EventEmitter<Blob>();
 
   private metadataService = inject(MetadataService);
   private toastrService = inject(ToastrService);
@@ -95,9 +95,7 @@ export class ImageUpload implements OnInit {
       ctx.drawImage(img, 0, 0, this.inputWidth(), this.inputHeight());
       URL.revokeObjectURL(img.src);
 
-      const imageData = ctx.getImageData(0, 0, this.inputWidth(), this.inputHeight());
-
-      this.onImageReady.emit(imageData);
+      canvas.toBlob((blob) => this.onImageReady.emit(blob!), 'image/png', 1);
     };
   }
 }

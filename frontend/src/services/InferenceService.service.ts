@@ -6,16 +6,7 @@ import { map, Observable } from 'rxjs';
 export class InferenceService {
   private httpClient = inject(HttpClientWrapper);
 
-  public runInference(
-    image: ImageData,
-    width: number,
-    height: number,
-  ): Observable<[number, number][]> {
-    var buffer = new Uint8Array(image.data);
-    return this.httpClient
-      .postInference(buffer, width, height)
-      .pipe(
-        map((x) => Object.entries(x.results).map(([k, v]) => [Number(k), v] as [number, number])),
-      );
+  public runInference(image: Blob): Observable<number[]> {
+    return this.httpClient.postInference(image).pipe(map((x) => x.predictions));
   }
 }

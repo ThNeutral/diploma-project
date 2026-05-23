@@ -1,4 +1,4 @@
-use std::{fmt, sync::OnceLock};
+use std::fmt;
 
 use burn::{
   backend::{
@@ -20,9 +20,9 @@ use crate::{
 pub struct ImageView {
   pub ptr: *const u8,
   pub len: usize,
-  pub width: u32,
-  pub height: u32,
-  pub channels: u8,
+  pub width: usize,
+  pub height: usize,
+  pub channels: usize,
 }
 
 impl fmt::Display for ImageView {
@@ -30,7 +30,7 @@ impl fmt::Display for ImageView {
     write!(
       f,
       "ImageView({}x{}x{})",
-      self.width, self.height, self.channels
+      self.channels, self.width, self.height
     )
   }
 }
@@ -45,7 +45,7 @@ pub extern "C" fn init_model_cpu() {
 }
 
 #[no_mangle]
-pub extern "C" fn run_inference_on_cpu(view: &ImageView) -> FloatArray {
+pub extern "C" fn run_inference_on_cpu(view: ImageView) -> FloatArray {
   let device = NdArrayDevice::default();
   log::debug!(
     "[run_inference_on_cpu] Running inference on {:?} for {}",
@@ -55,7 +55,7 @@ pub extern "C" fn run_inference_on_cpu(view: &ImageView) -> FloatArray {
 
   let model = Model::<NdArray>::default();
 
-  let tensor = image_view_to_tensor(view, &device);
+  let tensor = image_view_to_tensor(&view, &device);
 
   let result = model.forward(tensor);
   log::debug!("[run_inference_on_cpu] Inference result: {:?}", result);
@@ -82,7 +82,7 @@ pub extern "C" fn init_model_gpu() {
 }
 
 #[no_mangle]
-pub extern "C" fn run_inference_on_gpu(view: &ImageView) -> FloatArray {
+pub extern "C" fn run_inference_on_gpu(view: ImageView) -> FloatArray {
   let device = WgpuDevice::default();
   log::debug!(
     "[run_inference_on_gpu] Running inference on {:?} for {}",
@@ -92,7 +92,7 @@ pub extern "C" fn run_inference_on_gpu(view: &ImageView) -> FloatArray {
 
   let model = Model::<Wgpu>::default();
 
-  let tensor = image_view_to_tensor(view, &device);
+  let tensor = image_view_to_tensor(&view, &device);
 
   let result = model.forward(tensor);
   log::debug!("[run_inference_on_gpu] Inference result: {:?}", result);

@@ -11,29 +11,31 @@ import { MetadataService } from '../../../services/MetadataService.service';
   styleUrl: './prediction-result.css',
 })
 export class PredictionResult implements OnInit {
-  @Input() inputImage: ImageData | null = null;
+  @Input() inputImage: Blob | null = null;
 
   private inferenceService = inject(InferenceService);
   private metadataService = inject(MetadataService);
   private toastrService = inject(ToastrService);
 
   protected loadingResults = signal(false);
-  protected results = signal<[number, number][]>([]);
+  protected results = signal<number[]>([]);
 
   protected loadingLabels = signal(false);
   protected labels = signal<string[]>([]);
 
   protected sortedResults = computed<[string, number, number][]>(() => {
-    const total = this.results().reduce((acc, x) => acc + x[1], 0);
+    const logits = this.results();
     const labels = this.labels();
 
-    return this.results()
-      .sort((a, b) => {
-        if (a[1] > b[1]) return -1;
-        if (a[1] < b[1]) return 1;
-        return 0;
-      })
-      .map((x) => [labels[x[0]], x[1], total]);
+    const maxLogit = Math.max(...logits);
+    const exps = logits.map((x) => Math.exp(x - maxLogit));
+    const sumExps = exps.reduce((acc, x) => acc + x, 0);
+    const probs = exps.map((x) => x / sumExps);
+
+    return probs
+      .map((prob, i) => [labels[i], prob, 1] as [string, number, number])
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
   });
 
   public ngOnInit(): void {
@@ -58,24 +60,24 @@ export class PredictionResult implements OnInit {
   protected onStartInference(event: Event) {
     event.preventDefault();
 
+    console.log(this.inputImage);
+
     if (!this.inputImage) {
       this.toastrService.error('Please upload image first.', 'No image uploaded.');
       return;
     }
 
     this.loadingResults.set(true);
-    this.inferenceService
-      .runInference(this.inputImage, this.inputImage.width, this.inputImage.height)
-      .subscribe({
-        next: (value) => {
-          this.results.set(value);
-          this.loadingResults.set(false);
-        },
-        error: (err) => {
-          const message = err?.error?.message ?? err?.message ?? err;
-          this.toastrService.error(message, 'Failed to run inference.');
-          this.loadingResults.set(false);
-        },
-      });
+    this.inferenceService.runInference(this.inputImage).subscribe({
+      next: (value) => {
+        this.results.set(value);
+        this.loadingResults.set(false);
+      },
+      error: (err) => {
+        const message = err?.error?.message ?? err?.message ?? err;
+        this.toastrService.error(message, 'Failed to run inference.');
+        this.loadingResults.set(false);
+      },
+    });
   }
 }

@@ -15,10 +15,6 @@ internal static partial class RustWrapper
 	[UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
 	public static partial StringArray get_labels_array_unsafe();
 
-	[LibraryImport(DllConstants.Location)]
-	[UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
-	public static partial void free_string_array(StringArray arr);
-
 	#endregion
 
 	#region input_size
@@ -26,10 +22,6 @@ internal static partial class RustWrapper
 	[LibraryImport(DllConstants.Location)]
 	[UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
 	public static partial UsizeArray get_input_size_unsafe();
-
-	[LibraryImport(DllConstants.Location)]
-	[UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
-	public static partial void free_usize_array(UsizeArray arr);
 
 	#endregion
 
@@ -49,7 +41,7 @@ internal static partial class RustWrapper
 
 	[LibraryImport(DllConstants.Location)]
 	[UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
-	public static partial void run_inference_on_cpu(ImageView view);
+	public static partial FloatArray run_inference_on_cpu(ImageView view);
 
 	#endregion
 
@@ -61,7 +53,23 @@ internal static partial class RustWrapper
 
 	[LibraryImport(DllConstants.Location)]
 	[UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
-	public static partial void run_inference_on_gpu(ImageView view);
+	public static partial FloatArray run_inference_on_gpu(ImageView view);
+
+	#endregion
+
+	#region free functions
+
+	[LibraryImport(DllConstants.Location)]
+	[UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+	public static partial void free_usize_array(UsizeArray arr);
+
+	[LibraryImport(DllConstants.Location)]
+	[UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+	public static partial void free_string_array(StringArray arr);
+
+	[LibraryImport(DllConstants.Location)]
+	[UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+	public static partial void free_float_array(FloatArray arr);
 
 	#endregion
 }

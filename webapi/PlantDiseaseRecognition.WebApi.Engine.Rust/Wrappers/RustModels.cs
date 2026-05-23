@@ -17,11 +17,18 @@ public struct UsizeArray
 }
 
 [StructLayout(LayoutKind.Sequential)]
+public struct FloatArray
+{
+	public IntPtr Ptr;
+	public nuint Len;
+}
+
+[StructLayout(LayoutKind.Sequential)]
 public struct ImageView
 {
 	public IntPtr Ptr;
 	public nuint Len;
-	public uint Width;
-	public uint Height;
-	public byte Channels;
+	public nuint Width;
+	public nuint Height;
+	public nuint Channels;
 }

@@ -11,20 +11,13 @@ import { PredictionResult } from './components/prediction-result/prediction-resu
   imports: [ImageUpload, PredictionResult],
 })
 export class App implements OnInit {
-  private toastrService = inject(ToastrService);
-
-  protected selectedImageData = signal<ImageData | null>(null);
+  protected selectedImageData = signal<Blob | null>(null);
 
   public constructor() {}
 
   public ngOnInit(): void {}
 
-  protected onImageReady(imageData: ImageData) {
-    if (imageData.colorSpace != 'srgb') {
-      this.toastrService.error('Expected srgb image', 'Unknown error');
-      return;
-    }
-
+  protected onImageReady(imageData: Blob) {
     this.selectedImageData.set(imageData);
   }
 }
