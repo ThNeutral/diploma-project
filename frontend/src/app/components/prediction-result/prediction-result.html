@@ -1,3 +1,18 @@
+@if (isMobile()) {
+  <button
+    [disabled]="!inputImage || loadingResults()"
+    class="btn-infer"
+    (click)="onStartInference($event)"
+  >
+    @if (!inputImage) {
+      Please upload image
+    } @else if (loadingResults()) {
+      Running inference...
+    } @else {
+      Run inference
+    }
+  </button>
+}
 <div class="prediction-result">
   <table class="result-table">
     <tr class="result-table-row-header">
@@ -15,17 +30,19 @@
       </tr>
     }
   </table>
-  <button
-    [disabled]="!inputImage || loadingResults()"
-    class="btn-infer"
-    (click)="onStartInference($event)"
-  >
-    @if (!inputImage) {
-      Please upload image
-    } @else if (loadingResults()) {
-      Running inference...
-    } @else {
-      Run inference
-    }
-  </button>
+  @if (!isMobile()) {
+    <button
+      [disabled]="!inputImage || loadingResults()"
+      class="btn-infer"
+      (click)="onStartInference($event)"
+    >
+      @if (!inputImage) {
+        Please upload image
+      } @else if (loadingResults()) {
+        Running inference...
+      } @else {
+        Run inference
+      }
+    </button>
+  }
 </div>

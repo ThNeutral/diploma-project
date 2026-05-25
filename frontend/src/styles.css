@@ -10,6 +10,11 @@ body {
   width: 100%;
 }
 
+body {
+  background-color: var(--color-bg-primary);
+  background-attachment: fixed;
+}
+
 :root {
   --color-bg-primary: #0d0f14;
   --color-bg-card: #161a24;

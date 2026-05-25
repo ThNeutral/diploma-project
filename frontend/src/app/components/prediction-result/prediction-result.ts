@@ -3,6 +3,8 @@ import { ToastrService } from 'ngx-toastr';
 import { InferenceService } from '../../../services/InferenceService.service';
 import { DataBar } from '../data-bar/data-bar';
 import { MetadataService } from '../../../services/MetadataService.service';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { MobileObserver } from '../../../services/MobileObserver.service';
 
 @Component({
   selector: 'app-prediction-result',
@@ -16,12 +18,15 @@ export class PredictionResult implements OnInit {
   private inferenceService = inject(InferenceService);
   private metadataService = inject(MetadataService);
   private toastrService = inject(ToastrService);
+  private mobileObserver = inject(MobileObserver);
 
   protected loadingResults = signal(false);
   protected results = signal<number[]>([]);
 
   protected loadingLabels = signal(false);
   protected labels = signal<string[]>([]);
+
+  protected isMobile = signal(false);
 
   protected sortedResults = computed<[string, number, number][]>(() => {
     const logits = this.results();
@@ -39,6 +44,8 @@ export class PredictionResult implements OnInit {
   });
 
   public ngOnInit(): void {
+    this.mobileObserver.onMobileChange(this.isMobile.set);
+
     this.loadLabels();
   }
 
