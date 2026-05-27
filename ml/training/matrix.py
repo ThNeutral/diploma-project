@@ -36,6 +36,8 @@ def train_variations_from_config(
 	if not device:
 		device = torch.accelerator.current_accelerator() if torch.accelerator.is_available() else 'cpu'
 
+	print(f"Using device: {device}")
+
 	run_settings = config.run_settings
 
 	for run_config in config.to_product():
@@ -183,6 +185,8 @@ def _get_dataloaders(
 			dataset=datasource,
 			batch_size=batch_size,
 			num_workers=num_workers,
+			persistent_workers=True,
+			prefetch_factor=2,
 			shuffle=name == "train"
 		)
 

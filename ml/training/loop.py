@@ -21,7 +21,22 @@ def train_model_(
 		device: torch.device
 ):
 	optimizer = optim.SGD(
-		params=model.classifier.parameters()
+		model.classifier.parameters(),
+		lr=0.1,
+		momentum=0.9,
+		weight_decay=1e-4
+	)
+
+	warmup_epochs = 5
+
+	warmup = optim.lr_scheduler.LinearLR(
+    optimizer, start_factor=0.1, end_factor=1.0, total_iters=warmup_epochs
+	)
+	cosine = optim.lr_scheduler.CosineAnnealingLR(
+    optimizer, T_max=epochs - warmup_epochs, eta_min=1e-6
+	)
+	scheduler = optim.lr_scheduler.SequentialLR(
+    optimizer, schedulers=[warmup, cosine], milestones=[warmup_epochs]
 	)
 
 	loss_fn = nn.CrossEntropyLoss()
@@ -65,6 +80,8 @@ def train_model_(
 			StepName.Test: test_result,
 			StepName.Validation: val_result
 		}, epoch)
+
+		scheduler.step()
 
 	tracker.flush()
 	

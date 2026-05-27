@@ -10,13 +10,12 @@
 			false
 		],
 		"model_name": [
-			"efficientnetv2_s",
-			"efficientnetv2_m"
+			"mobilenetv3_l"
 		]
 	},
 	"run_settings": {
-		"epochs": 1,
-		"batch_size": 8,
+		"epochs": 25,
+		"batch_size": 32,
 		"num_workers": 4
 	},
 	"train_data_dir": "./data/PlantVillage/train",

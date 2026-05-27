@@ -30,9 +30,8 @@ def step(
 
 	context = torch.enable_grad() if optimizer is not None else torch.no_grad()
 
-	counter = 0
 	with context:
-		for X_data, y_data in tqdm(dataloader):
+		for i, (X_data, y_data) in enumerate(tqdm(dataloader)):
 			X_data = X_data.to(device)
 			y_data = y_data.to(device)
 		
@@ -50,18 +49,14 @@ def step(
 				loss.backward()
 				optimizer.step()
 
-			total_loss += loss.to("cpu").item() * len(X_data)
+			total_loss += loss.item() * len(X_data)
 
 			cm = cm_fn(
 				y_pred,
 				y_data
-			).to("cpu")
+			)
 			confusion_matrix = cm if confusion_matrix is None else confusion_matrix + cm
 
-			counter += 1
-			if counter == 5:
-				break
-	
 	avg_loss = total_loss / len(dataloader.dataset)
 
 	return StepResult(

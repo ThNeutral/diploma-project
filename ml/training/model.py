@@ -2,7 +2,7 @@ import torch
 import logging
 from torch import nn
 import torchvision
-import torchsummary
+import torchinfo
 
 from dto.training import ModelName
 
@@ -14,6 +14,14 @@ model_packages = {
 	ModelName.EfficientNetV2_M: (
 		torchvision.models.EfficientNet_V2_M_Weights.DEFAULT,
 		torchvision.models.efficientnet_v2_m,
+	),
+	ModelName.MobileNetV3_S: (
+		torchvision.models.MobileNet_V3_Small_Weights.DEFAULT,
+		torchvision.models.mobilenet_v3_small
+	),
+	ModelName.MobileNetV3_L: (
+		torchvision.models.MobileNet_V3_Large_Weights.DEFAULT,
+		torchvision.models.mobilenet_v3_large
 	)
 }
 
@@ -52,13 +60,17 @@ def build_model(
 	for param in model.features[-unfrozen_blocks].parameters():
 		param.requires_grad = True
 
+	in_features = model.classifier[-1].in_features
 	model.classifier = nn.Sequential(
+		nn.Linear(960, 1024),
+		nn.Hardswish(),
 		nn.Dropout(0.2),
-		nn.Linear(1280, num_of_classes)
+		nn.Linear(1024, num_of_classes)
 	).to(device)
 
 	input_size = get_model_input_size_1d(model_name)
-	torchsummary.summary(model, (3, input_size, input_size))
+	print(input_size)
+	torchinfo.summary(model, (1, 3, input_size, input_size))
 
 	return model
 
