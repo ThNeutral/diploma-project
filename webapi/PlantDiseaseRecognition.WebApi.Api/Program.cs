@@ -2,6 +2,8 @@ using System.Text.Json;
 using PlantDiseaseRecognition.WebApi.Api.Configurations;
 using PlantDiseaseRecognition.WebApi.Api.Extensions;
 using PlantDiseaseRecognition.WebApi.Engine.Rust.IoC;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,9 +45,23 @@ var config = builder
 builder.Services
 	.AddRustEngine(config.RustEngine);
 
+builder.Services.AddRateLimiter(options =>
+{
+  options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(_ =>
+    RateLimitPartition.GetConcurrencyLimiter("global", _ => new ConcurrencyLimiterOptions
+    {
+      PermitLimit = config.MaxConcurrentRequests,
+      QueueLimit = 0 
+    }));
+
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+});
+
 var app = builder.Build();
 
 app.UseCors(corsAllowAllPolicyName);
+
+app.UseRateLimiter();
 
 app.UseExceptionHandler();
 

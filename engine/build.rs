@@ -10,13 +10,13 @@ fn main() {
 
 fn generate_model() {
     ModelGen::new()
-        .input("../models/2026-05-19T15-34-18/ModelName.EfficientNetV2_S_True_0/ModelName.EfficientNetV2_S_True_0.onnx")
+        .input("../models/2026-05-30T16-05-09/ModelName.MobileNetV3_L_True_1/ModelName.MobileNetV3_L_True_1.onnx")
         .out_dir("./models")
         .run_from_script();
 }
 
 fn generate_metadata() {
-    let json_str = include_str!("../models/2026-05-19T15-34-18/ModelName.EfficientNetV2_S_True_0/ModelName.EfficientNetV2_S_True_0_metadata.json");
+    let json_str = include_str!("../models/2026-05-30T16-05-09/ModelName.MobileNetV3_L_True_1/ModelName.MobileNetV3_L_True_1_metadata.json");
     let root: serde_json::Value = serde_json::from_str(json_str).unwrap();
 
     let classes: Vec<String> = serde_json::from_value(root["classes"].clone()).unwrap();

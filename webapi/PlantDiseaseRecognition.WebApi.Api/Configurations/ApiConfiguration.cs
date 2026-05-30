@@ -9,4 +9,7 @@ public class ApiConfiguration
 
 	[Required]
 	public required RustEngineConfiguration RustEngine { get; set; }
+
+	[Required]
+	public required int MaxConcurrentRequests { get; set; }
 }

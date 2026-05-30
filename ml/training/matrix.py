@@ -185,7 +185,7 @@ def _get_dataloaders(
 			dataset=datasource,
 			batch_size=batch_size,
 			num_workers=num_workers,
-			persistent_workers=True,
+			persistent_workers=False,
 			prefetch_factor=2,
 			shuffle=name == "train"
 		)

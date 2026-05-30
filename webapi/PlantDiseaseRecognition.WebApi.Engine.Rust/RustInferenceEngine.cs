@@ -12,7 +12,7 @@ namespace PlantDiseaseRecognition.WebApi.Engine.Rust;
 
 public class RustInferenceEngine : IInferenceEngine
 {
-	private static readonly ArrayPool<float> Pool = ArrayPool<float>.Shared;
+	private static readonly ArrayPool<byte> Pool = ArrayPool<byte>.Shared;
 
 	private readonly ILogger<RustInferenceEngine> _logger;
 	private readonly RustEngineConfiguration _configuration;
@@ -38,9 +38,9 @@ public class RustInferenceEngine : IInferenceEngine
 		}
 	}
 
-	private unsafe IReadOnlyList<float> RunInferenceOnBuffer(float[] buffer, int width, int height, int size)
+	private unsafe IReadOnlyList<float> RunInferenceOnBuffer(byte[] buffer, int width, int height, int size)
 	{
-		fixed (float* bufferPtr = buffer)
+		fixed (byte* bufferPtr = buffer)
 		{
 			var view = new ImageView()
 			{
@@ -65,7 +65,7 @@ public class RustInferenceEngine : IInferenceEngine
 
 	private async Task ParseStreamIntoBufferAsync(
 		Stream data,
-		float[] buffer,
+		byte[] buffer,
 		int width,
 		int height
 	)
@@ -82,9 +82,9 @@ public class RustInferenceEngine : IInferenceEngine
 				for (int col = 0; col < width; col++)
 				{
 					var px = pixelRow[col];
-					buffer[0 * height * width + row * width + col] = px.R / 255f;
-					buffer[1 * height * width + row * width + col] = px.G / 255f;
-					buffer[2 * height * width + row * width + col] = px.B / 255f;
+					buffer[0 * height * width + row * width + col] = px.R;
+					buffer[1 * height * width + row * width + col] = px.G;
+					buffer[2 * height * width + row * width + col] = px.B;
 				}
 			}
 		});

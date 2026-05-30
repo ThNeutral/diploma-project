@@ -116,8 +116,18 @@ where
 {
   let pixels: &[u8] = unsafe { std::slice::from_raw_parts(img.ptr, img.len) };
 
-  let floats: Vec<f32> = pixels.iter().map(|&p| p as f32 / 255.0).collect();
-
+  let floats: Vec<f32> = pixels
+    .iter()
+    .map(|&p| p as f32 / 255.0)
+    .enumerate()
+    .map(|(i, p)| {
+        let channel = i / (img.width as usize * img.height as usize);
+        let mean = [0.485, 0.456, 0.406][channel];
+        let std  = [0.229, 0.224, 0.225][channel];
+        (p - mean) / std
+    })
+    .collect();
+  
   let data = TensorData::new(
     floats,
     Shape::new([
